@@ -1,0 +1,1 @@
+import { redirect } from 'next/navigation';import { getSession } from '@/lib/auth/session';import TestBuilder from '@/features/tests/TestBuilder';export const dynamic='force-dynamic';export default async function TestsPage(){if(!(await getSession()))redirect('/login');return <TestBuilder/>;}

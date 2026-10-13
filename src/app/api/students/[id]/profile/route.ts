@@ -1,0 +1,2 @@
+import { NextResponse } from 'next/server';import { getSession } from '@/lib/auth/session';import { getStudentProfile } from '@/lib/students/profile';
+type Context={params:Promise<{id:string}>};export async function GET(_request:Request,context:Context){const user=await getSession();if(!user)return NextResponse.json({error:'Кіру қажет.'},{status:401});try{return NextResponse.json({profile:await getStudentProfile(user.id,(await context.params).id)});}catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Профиль жүктелмеді.'},{status:404});}}

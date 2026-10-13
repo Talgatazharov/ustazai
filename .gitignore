@@ -1,0 +1,10 @@
+node_modules/
+.next/
+.env*
+!.env.example
+*.tsbuildinfo
+.data/
+uploads/private/
+templates/private/
+tmp/ocr/
+generated/private/

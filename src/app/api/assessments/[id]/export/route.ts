@@ -1,0 +1,7 @@
+import { NextResponse } from 'next/server';
+import { getSession } from '@/lib/auth/session';
+import { getAssessment } from '@/lib/assessments/repository';
+import { renderAssessmentDocx } from '@/lib/documents/assessment-docx';
+import { savePrivateFile } from '@/lib/storage/local';
+import { createStoredDocument } from '@/lib/documents/repository';
+export async function GET(request:Request,{params}:{params:Promise<{id:string}>}){const user=await getSession();if(!user)return NextResponse.json({error:'Кіру қажет.'},{status:401});const {id}=await params;const assessment=await getAssessment(user.id,id);if(!assessment)return NextResponse.json({error:'Бағалау табылмады.'},{status:404});if(!assessment.questions?.length)return NextResponse.json({error:'Алдымен тапсырмалар қосыңыз.'},{status:400});const variant=new URL(request.url).searchParams.get('variant')==='teacher'?'teacher':'student';const bytes=await renderAssessmentDocx(assessment,variant);const filename=`${assessment.kind}-${variant}-${id.slice(0,8)}.docx`;const metadata=await savePrivateFile(user.id,filename,bytes);await createStoredDocument(user.id,{title:`${assessment.title} — ${variant==='teacher'?'мұғалім':'оқушы'} нұсқасы`,category:assessment.kind,...metadata});return new NextResponse(new Uint8Array(bytes),{headers:{'content-type':'application/vnd.openxmlformats-officedocument.wordprocessingml.document','content-disposition':`attachment; filename*=UTF-8''${encodeURIComponent(filename)}`}});}

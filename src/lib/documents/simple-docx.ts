@@ -1,0 +1,2 @@
+import 'server-only';import { Document,Packer,Paragraph,HeadingLevel,TextRun } from 'docx';
+export async function createSimpleDocx(title:string,sections:{heading:string;text:string}[]){const children=[new Paragraph({text:title,heading:HeadingLevel.TITLE}),...sections.flatMap(section=>[new Paragraph({text:section.heading,heading:HeadingLevel.HEADING_2}),...section.text.split('\n').map(text=>new Paragraph({children:[new TextRun(text)]}))])];return Packer.toBuffer(new Document({sections:[{children}]}));}

@@ -1,0 +1,1 @@
+import { redirect } from 'next/navigation';import { getSession } from '@/lib/auth/session';import Copilot from '@/features/copilot/Copilot';export const dynamic='force-dynamic';export default async function CopilotPage(){if(!(await getSession()))redirect('/login');return <Copilot/>;}
